@@ -1,0 +1,53 @@
+@import "tailwindcss";
+
+:root {
+    --background-100: #f7f7f7;
+    --background-200: #fff;
+    --background-300: #eee;
+    --border-100: rgba(0, 0, 0, 0.12);
+    --primary: #ff4191;
+    --shadow-100: rgba(0, 0, 0, 0.12);
+    --text-100: #646464;
+    --text-200: #323232;
+}
+
+@theme inline {
+    --color-background-100: var(--background-100);
+    --color-background-200: var(--background-200);
+    --color-background-300: var(--background-300);
+    --color-border-100: var(--border-100);
+    --color-primary: var(--primary);
+    --color-text-100: var(--text-100);
+    --color-text-200: var(--text-200);
+    --tw-shadow-color: var(--shadow-100);
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-100: #171717;
+        --background-200: #0c0c0c;
+        --background-300: #232323;
+        --border-100: rgba(255, 255, 255, 0.12);
+        --shadow-100: rgba(255, 255, 255, 0.12);
+        --text-100: #eaeaea;
+        --text-200: #fff;
+    }
+}
+
+@layer base {
+    body {
+        @apply h-screen bg-background-100 text-text-100;
+    }
+
+    input {
+        @apply px-3.5 py-1 border border-border-100 rounded-lg;
+    }
+
+    input[type="password"]::-ms-reveal {
+        @apply hidden;
+    }
+
+    button {
+        @apply cursor-pointer hover:text-primary hover:shadow-md;
+    }
+}
