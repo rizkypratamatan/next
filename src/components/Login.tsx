@@ -22,7 +22,7 @@ const Login: React.FC = () => {
     return (
         <main className="flex h-screen">
             <section className="grow flex flex-col justify-center p-10">
-                <img className="max-w-full max-h-full object-contain" src="/public/images/image-login.png"
+                <img className="max-w-full max-h-full object-contain" src="/images/image-login.png"
                      alt="Login Image"/>
             </section>
             <section className="basis-145 flex flex-col gap-6 justify-center p-21.5">

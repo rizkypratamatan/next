@@ -1,12 +1,12 @@
-use dotenv::dotenv;
+use dotenv::from_filename;
 use std::env;
 use tauri::menu::{MenuBuilder, MenuItemBuilder};
 use tauri::tray::{MouseButton, TrayIconBuilder, TrayIconEvent};
-use tauri::{AppHandle, Manager, WindowEvent, Wry};
+use tauri::{AppHandle, Manager, Url, WindowEvent, Wry};
 
 #[tauri::command]
 fn login(app_handle: AppHandle, password: &str) -> String {
-	if password == env::var("APPLICATION_PASSWORD").unwrap_or_default() {
+	if password == env::var("VITE_APPLICATION_PASSWORD").unwrap_or_default() {
 		if let Some(window) = app_handle.get_webview_window("main") {
 			let _ = window.eval("window.location.href = 'https://web.whatsapp.com/';");
 		}
@@ -19,7 +19,11 @@ fn login(app_handle: AppHandle, password: &str) -> String {
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-	dotenv().ok();
+	if cfg!(debug_assertions) {
+		from_filename(".env.development").ok();
+	} else {
+		from_filename(".env.production").ok();
+	}
 
 	tauri::Builder::<Wry>::default()
 		.setup(|app| {
@@ -70,7 +74,9 @@ pub fn run() {
 		.on_window_event(|window, event| {
 			if let WindowEvent::CloseRequested { api, .. } = event {
 				if let Some(webview) = window.get_webview_window(window.label()) {
-					let _ = webview.eval("window.location.href = 'http://localhost:50000'");
+					let _ = webview.navigate(
+						Url::parse(&env::var("VITE_APPLICATION_URL").unwrap_or_default()).unwrap(),
+					);
 				}
 
 				// Hide to tray
