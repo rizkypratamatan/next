@@ -1,30 +1,15 @@
-use dotenv::from_filename;
-use std::env;
+pub mod commands;
+pub mod config;
+pub mod models;
+
+use crate::commands::login;
+use crate::models::Config;
 use tauri::menu::{MenuBuilder, MenuItemBuilder};
 use tauri::tray::{MouseButton, TrayIconBuilder, TrayIconEvent};
 use tauri::{AppHandle, Manager, Url, WindowEvent, Wry};
 
-#[tauri::command]
-fn login(app_handle: AppHandle, password: &str) -> String {
-	if password == env::var("VITE_APPLICATION_PASSWORD").unwrap_or_default() {
-		if let Some(window) = app_handle.get_webview_window("main") {
-			let _ = window.eval("window.location.href = 'https://web.whatsapp.com/';");
-		}
-
-		return "Password matched. You will redirect to the page.".to_string();
-	}
-
-	"Incorrect password. Please try again.".to_string()
-}
-
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-	if cfg!(debug_assertions) {
-		from_filename(".env.development").ok();
-	} else {
-		from_filename(".env.production").ok();
-	}
-
 	tauri::Builder::<Wry>::default()
 		.setup(|app| {
 			let app_handle: &AppHandle = app.handle();
@@ -75,7 +60,7 @@ pub fn run() {
 			if let WindowEvent::CloseRequested { api, .. } = event {
 				if let Some(webview) = window.get_webview_window(window.label()) {
 					let _ = webview.navigate(
-						Url::parse(&env::var("VITE_APPLICATION_URL").unwrap_or_default()).unwrap(),
+						Url::parse(&Config::default().base_url).unwrap(),
 					);
 				}
 
